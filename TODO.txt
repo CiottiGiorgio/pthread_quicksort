@@ -1,0 +1,2 @@
+Next step should be to implement a simple threadpool and use it to implement
+a threaded version of quicksort.
