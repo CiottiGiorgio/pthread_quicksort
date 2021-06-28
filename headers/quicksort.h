@@ -12,4 +12,4 @@ void _hybrid_quicksort(int *const data, const int low, const int high);
 void hybrid_quicksort(int *const data, const int size);
 
 void _threaded_quicksort(void *args);
-int threaded_quicksort(int *const data, const int size);
+void threaded_quicksort(int *const data, const int size);

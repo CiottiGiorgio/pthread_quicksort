@@ -1,8 +1,10 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "../C-Thread-Pool/thpool.h"
 #include "../headers/utilities.h"
 
+#define N_THREADS 8
 #define SORTING_THRESHOLD 32
 
 
@@ -12,15 +14,9 @@ int partition(int *const data, const int low, const int high) {
     int j = high + 1;
 
     while (1) {
-        do {
-            i++;
-        } while (data[i] < pivot);
-        do {
-            j--;
-        } while (data[j] > pivot);
-        if (i >= j) {
-            return j;
-        }
+        do i++; while (data[i] < pivot);
+        do j--; while (data[j] > pivot);
+        if (i >= j) return j;
         swap(data, i, j);
     }
 }
@@ -74,58 +70,64 @@ typedef struct {
     int low;
     int high;
     threadpool pool;
-} qsargs;
+} qs_params;
 
 void _threaded_quicksort(void *args) {
-    qsargs *aargs = (qsargs *)args;
+    // This stands for "concrete args".
+    qs_params *c_args = (qs_params *)args;
 
-    if (aargs->low < aargs->high) {
-        if (aargs->high - aargs->low < SORTING_THRESHOLD) {
-            _insertionsort(aargs->data, aargs->low, aargs->high);
+    if (c_args->low < c_args->high) {
+        if (c_args->high - c_args->low < SORTING_THRESHOLD) {
+            _insertionsort(c_args->data, c_args->low, c_args->high);
         } else {
-            qsargs *child1_args, *child2_args;
+            qs_params *left_child, *right_child;
 
-            const int p = partition(aargs->data, aargs->low, aargs->high);
+            const int p = partition(c_args->data, c_args->low, c_args->high);
 
-            child1_args = (qsargs *)malloc(sizeof(qsargs));
-            child1_args->data   = aargs->data;
-            child1_args->low    = aargs->low;
-            child1_args->high   = p;
-            child1_args->pool   = aargs->pool;
+            left_child  = malloc(sizeof(qs_params));
+            right_child = malloc(sizeof(qs_params));
 
-            child2_args = (qsargs *)malloc(sizeof(qsargs));
-            child2_args->data   = aargs->data;
-            child2_args->low    = p + 1;
-            child2_args->high   = aargs->high;
-            child2_args->pool   = aargs->pool;
+            left_child->data    = c_args->data;
+            left_child->low     = c_args->low;
+            left_child->high    = p;
+            left_child->pool    = c_args->pool;
 
-            thpool_add_work(aargs->pool, _threaded_quicksort, (void *)child1_args);
-            thpool_add_work(aargs->pool, _threaded_quicksort, (void *)child2_args);
+            right_child->data   = c_args->data;
+            right_child->low    = p + 1;
+            right_child->high   = c_args->high;
+            right_child->pool   = c_args->pool;
+
+            thpool_add_work(c_args->pool, _threaded_quicksort, (void *)left_child);
+            thpool_add_work(c_args->pool, _threaded_quicksort, (void *)right_child);
         }
     }
 
-    free(aargs);
+    // Commenting this next line makes the program work but obviously with huge memory leaks.
+    // I am hopeless at this point. I don't know what is wrong with this code and I want to cry my eyes out.
+    free(args);
 }
 
-int threaded_quicksort(int *const data, const int size) {
-    threadpool th_pool;
+void threaded_quicksort(int *const data, const int size) {
+    threadpool qs_pool;
+    qs_params *initial_args;
 
-    if ((th_pool = thpool_init(16)) == 0) {
-        return -1;
+    if ((qs_pool = thpool_init(N_THREADS)) == 0) {
+        return;
     }
 
-    qsargs *initial_args = (qsargs *)malloc(sizeof(qsargs));
-    initial_args->data = data;
-    initial_args->low = 0;
-    initial_args->high = size - 1;
-    initial_args->pool = th_pool;
+    initial_args = malloc(sizeof(qs_params));
+    initial_args->data  = data;
+    initial_args->low   = 0;
+    initial_args->high  = size - 1;
+    initial_args->pool  = qs_pool;
 
-    if ((thpool_add_work(th_pool, _threaded_quicksort, (void *)initial_args)) != 0) {
-        return -1;
+    if ((thpool_add_work(qs_pool, _threaded_quicksort, (void *)initial_args)) != 0) {
+        free((void *)initial_args);
+        return;
     }
 
-    thpool_wait(th_pool);
-    thpool_destroy(th_pool);
+    thpool_wait(qs_pool);
+    thpool_destroy(qs_pool);
 
-    return 0;
+    free(initial_args);
 }

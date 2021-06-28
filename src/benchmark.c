@@ -29,7 +29,7 @@ void measure(void (*f)(int *const, const int), int *const initial_sequence, cons
 
     elapsed /= repetitions;
     printf("Average time:\t%lf s\n", elapsed);
-    //printf("%s\n", is_ordered(test_sequence, size) == 0 ? "Success!" : "Failure.");
+    printf("%s\n", is_ordered(test_sequence, size) == 0 ? "Success!" : "Failure.");
 
     free((void *)test_sequence);
 }

@@ -1,3 +1,6 @@
 [submodule "C-Thread-Pool"]
 	path = C-Thread-Pool
 	url = https://github.com/Pithikos/C-Thread-Pool
+[submodule "Hoard"]
+	path = Hoard
+	url = https://github.com/emeryberger/Hoard

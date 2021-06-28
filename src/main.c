@@ -4,8 +4,8 @@
 
 #include "../src/benchmark.c"
 
-#define N (1<<20)
-#define K (5)
+#define N (1<<25)
+#define K (3)
 
 
 int main() {
@@ -17,7 +17,7 @@ int main() {
         initial_sequence[i] = random() % 60000 - 30000;
     }
 
-    measure(&quicksort, initial_sequence, N, K);
+    //measure(&quicksort, initial_sequence, N, K);
     measure(&hybrid_quicksort, initial_sequence, N, K);
     measure(&threaded_quicksort, initial_sequence, N, K);
 
