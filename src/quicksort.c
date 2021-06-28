@@ -4,7 +4,7 @@
 #include "../C-Thread-Pool/thpool.h"
 #include "../headers/utilities.h"
 
-#define N_THREADS 8
+#define N_THREADS 4
 #define SORTING_THRESHOLD 32
 
 
@@ -102,8 +102,6 @@ void _threaded_quicksort(void *args) {
         }
     }
 
-    // Commenting this next line makes the program work but obviously with huge memory leaks.
-    // I am hopeless at this point. I don't know what is wrong with this code and I want to cry my eyes out.
     free(args);
 }
 
@@ -122,12 +120,9 @@ void threaded_quicksort(int *const data, const int size) {
     initial_args->pool  = qs_pool;
 
     if ((thpool_add_work(qs_pool, _threaded_quicksort, (void *)initial_args)) != 0) {
-        free((void *)initial_args);
         return;
     }
 
     thpool_wait(qs_pool);
     thpool_destroy(qs_pool);
-
-    free(initial_args);
 }

@@ -7,7 +7,7 @@ bin/utilities.o: headers/utilities.h src/utilities.c
 	$(CC) src/utilities.c -c -Os -g -o bin/utilities.o
 
 bin/benchmark.o: src/benchmark.c
-	$(CC) src/benchmark.c -c -Os -g -o bin/benchmark.os
+	$(CC) src/benchmark.c -c -Os -g -o bin/benchmark.o
 
 bin/quicksort.o: headers/quicksort.h src/quicksort.c
 	$(CC) src/quicksort.c -c -Os -g -o bin/quicksort.o
