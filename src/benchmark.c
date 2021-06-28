@@ -1,44 +1,35 @@
 #include <stdio.h>
-#include <time.h>
 #include <stdlib.h>
+#include <time.h>
 #include <string.h>
 
 #include "../headers/utilities.h"
 #include "../headers/quicksort.h"
 
-#define N (1<<17)
-#define K (5)
 
+void measure(void (*f)(int *const, const int), int *const initial_sequence, const int size, const unsigned int repetitions) {
+    int *test_sequence = (int *)malloc(size * sizeof(int));
 
-static void benchmark() {
-    srandom(time(NULL));
+    struct timespec start, finish;
+    double elapsed = 0;
 
-    int *initial_sequence = (int *)malloc(N * sizeof(int));
-    int *test_sequence = (int *)malloc(N * sizeof(int));
+    for (unsigned int i = 0; i < repetitions; i++) {
+        memcpy((void *)test_sequence, (void *)initial_sequence, size * sizeof(int));
 
-    for (unsigned int i = 0; i < N; i++) {
-        initial_sequence[i] = random() % 60000 - 30000;
+        clock_gettime(CLOCK_MONOTONIC, &start);
+        f(test_sequence, size);
+        clock_gettime(CLOCK_MONOTONIC, &finish);
+
+        elapsed += (finish.tv_sec - start.tv_sec);
+        elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
     }
 
-    clock_t begin, end;
-    double timeElapsed = 0;
+    //print_array(initial_sequence, size);
+    //print_array(test_sequence, size);
 
-    for (unsigned int i = 0; i < K; i++) {
-        memcpy((void *)test_sequence, (void *)initial_sequence, N * sizeof(int));
+    elapsed /= repetitions;
+    printf("Average time:\t%lf s\n", elapsed);
+    //printf("%s\n", is_ordered(test_sequence, size) == 0 ? "Success!" : "Failure.");
 
-        begin = clock();
-        //quicksort(test_sequence, N);
-        //hybrid_quicksort(test_sequence, N);
-        threaded_quicksort(test_sequence, N);
-        end = clock();
-
-        timeElapsed += (double)(end - begin) / CLOCKS_PER_SEC;
-    }
-
-    //print_array(initial_sequence, N);
-    //print_array(test_sequence, N);
-
-    timeElapsed /= K;
-    printf("%s\n", is_ordered(test_sequence, N) == 0 ? "Success!" : "Failure.");
-    printf("Average time:\t%lf s\n", timeElapsed);
+    free((void *)test_sequence);
 }

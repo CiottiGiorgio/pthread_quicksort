@@ -1,9 +1,7 @@
 #include <stdlib.h>
 
 #include "../C-Thread-Pool/thpool.h"
-
 #include "../headers/utilities.h"
-
 
 #define SORTING_THRESHOLD 32
 
