@@ -4,8 +4,8 @@
 
 #include "../src/benchmark.c"
 
-#define N (1<<22)
-#define K (3)
+#define N (1<<26)
+#define K (5)
 
 
 int main() {
@@ -17,9 +17,9 @@ int main() {
         initial_sequence[i] = random() % 60000 - 30000;
     }
 
-    //measure(&quicksort, initial_sequence, N, K);
-    measure(&hybrid_quicksort, initial_sequence, N, K);
-    measure(&threaded_quicksort, initial_sequence, N, K);
+    printf("Quicksort:\t\t%lf s\n", measure(&quicksort, initial_sequence, N, K));
+    printf("Hybrid quicksort:\t%lf s\n", measure(&hybrid_quicksort, initial_sequence, N, K));
+    printf("Threaded quicksort:\t%lf s\n", measure(&threaded_quicksort, initial_sequence, N, K));
 
     free((void *)initial_sequence);
 

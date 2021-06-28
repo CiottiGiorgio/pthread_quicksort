@@ -7,7 +7,7 @@
 #include "../headers/quicksort.h"
 
 
-void measure(void (*f)(int *const, const int), int *const initial_sequence, const int size, const unsigned int repetitions) {
+double measure(void (*f)(int *const, const int), int *const initial_sequence, const int size, const unsigned int repetitions) {
     int *test_sequence = (int *)malloc(size * sizeof(int));
 
     struct timespec start, finish;
@@ -28,8 +28,8 @@ void measure(void (*f)(int *const, const int), int *const initial_sequence, cons
     //print_array(test_sequence, size);
 
     elapsed /= repetitions;
-    printf("Average time:\t%lf s\n", elapsed);
-    printf("%s\n", is_ordered(test_sequence, size) == 0 ? "Success!" : "Failure.");
 
     free((void *)test_sequence);
+
+    return elapsed;
 }
