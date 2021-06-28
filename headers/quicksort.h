@@ -1,9 +1,15 @@
-int partition(int *const data, const unsigned int low, const unsigned int high);
+#include "../C-Thread-Pool/thpool.h"
 
-void _quicksort(int *const data, const unsigned int low, const unsigned int high);
-void quicksort(int *const data, const unsigned int size);
 
-void _insertionsort(int *const data, const unsigned int low, const unsigned int high);
+int partition(int *const data, const int low, const int high);
 
-void _hybrid_quicksort(int *const data, const unsigned int low, const unsigned int high);
-void hybrid_quicksort(int *const data, const unsigned int size);
+void _quicksort(int *const data, const int low, const int high);
+void quicksort(int *const data, const int size);
+
+void _insertionsort(int *const data, const int low, const int high);
+
+void _hybrid_quicksort(int *const data, const int low, const int high);
+void hybrid_quicksort(int *const data, const int size);
+
+void _threaded_quicksort(void *args);
+int threaded_quicksort(int *const data, const int size);
