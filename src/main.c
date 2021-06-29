@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "../src/benchmark.c"
+#include "../headers/benchmark.h"
+#include "../headers/quicksort.h"
 
 #define N (1<<26)
 #define K (5)
