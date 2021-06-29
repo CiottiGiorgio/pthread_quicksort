@@ -11,7 +11,7 @@
 int main() {
     srandom(time(NULL));
 
-    int *initial_sequence = (int *)malloc(N * sizeof(int));
+    int *initial_sequence = malloc(N * sizeof(int));
 
     for (unsigned int i = 0; i < N; i++) {
         initial_sequence[i] = random() % 60000 - 30000;
