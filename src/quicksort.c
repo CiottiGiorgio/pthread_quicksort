@@ -5,7 +5,8 @@
 #include "../headers/utilities.h"
 
 #define N_THREADS (8)
-#define SORTING_THRESHOLD (256)
+#define HYBRID_THRESHOLD (1<<8)
+#define THREADED_THRESHOLD (1<<11)
 
 
 int partition(int *const data, const int low, const int high) {
@@ -50,7 +51,7 @@ void _insertionsort(int *const data, const int low, const int high) {
 
 void _hybrid_quicksort(int *const data, const int low, const int high) {
     if (low < high) {
-        if (high - low < SORTING_THRESHOLD) {
+        if (high - low < HYBRID_THRESHOLD) {
             _insertionsort(data, low, high);
         } else {
             const int p = partition(data, low, high);
@@ -77,8 +78,8 @@ void _threaded_quicksort(void *args) {
     qs_params *c_args = (qs_params *)args;
 
     if (c_args->low < c_args->high) {
-        if (c_args->high - c_args->low < SORTING_THRESHOLD) {
-            _insertionsort(c_args->data, c_args->low, c_args->high);
+        if (c_args->high - c_args->low < THREADED_THRESHOLD) {
+            _hybrid_quicksort(c_args->data, c_args->low, c_args->high);
         } else {
             qs_params *left_child, *right_child;
 
