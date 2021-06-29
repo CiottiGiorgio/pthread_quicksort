@@ -2,7 +2,6 @@
 
 #include "../headers/utilities.h"
 
-
 void swap(int *const data, const int i, const int j) {
     int temp = data[i];
     data[i] = data[j];

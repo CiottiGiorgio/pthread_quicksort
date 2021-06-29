@@ -4,8 +4,8 @@
 #include "../C-Thread-Pool/thpool.h"
 #include "../headers/utilities.h"
 
-#define N_THREADS 8
-#define SORTING_THRESHOLD 256
+#define N_THREADS (8)
+#define SORTING_THRESHOLD (256)
 
 
 int partition(int *const data, const int low, const int high) {
@@ -120,6 +120,7 @@ void threaded_quicksort(int *const data, const int size) {
     initial_args->pool  = qs_pool;
 
     if ((thpool_add_work(qs_pool, _threaded_quicksort, (void *)initial_args)) != 0) {
+        free((void *)initial_args);
         return;
     }
 

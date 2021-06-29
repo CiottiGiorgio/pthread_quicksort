@@ -4,7 +4,7 @@
 
 #include "../src/benchmark.c"
 
-#define N (1<<26)
+#define N (1<<24)
 #define K (5)
 
 
