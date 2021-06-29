@@ -98,7 +98,11 @@ void _threaded_quicksort(void *args) {
             right_child->pool   = c_args->pool;
 
             thpool_add_work(c_args->pool, _threaded_quicksort, (void *)left_child);
-            thpool_add_work(c_args->pool, _threaded_quicksort, (void *)right_child);
+
+            // Why waste a perfectly good thread? Let's reuse it!
+            // Although to be fair this could build up a stack as would the other versions + it doesnt free args until all the stack is complete.
+            //  (Which means that ausiliary memory is release all at the end and not as soon as it is not needed anymore).
+            _threaded_quicksort((void*)right_child);
         }
     }
 
