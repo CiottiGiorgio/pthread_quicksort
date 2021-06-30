@@ -4,9 +4,9 @@
 #include "../C-Thread-Pool/thpool.h"
 #include "../headers/utilities.h"
 
-#define N_THREADS (8)
-#define HYBRID_THRESHOLD (1<<8)
-#define THREADED_THRESHOLD (1<<11)
+#define N_THREADS           (8)
+#define HYBRID_THRESHOLD    (1<<8)
+#define THREADED_THRESHOLD  (1<<11)
 
 
 int partition(int *const data, const int low, const int high) {
@@ -50,13 +50,23 @@ void _insertionsort(int *const data, const int low, const int high) {
 }
 
 void _hybrid_quicksort(int *const data, const int low, const int high) {
-    if (low < high) {
-        if (high - low < HYBRID_THRESHOLD) {
-            _insertionsort(data, low, high);
+    int lower_bound = low,
+        upper_bound = high;
+
+    while (lower_bound < upper_bound) {
+        if ((upper_bound - lower_bound) < HYBRID_THRESHOLD) {
+            _insertionsort(data, lower_bound, upper_bound);
+            break;
         } else {
-            const int p = partition(data, low, high);
-            _hybrid_quicksort(data, low, p);
-            _hybrid_quicksort(data, p+1, high);
+            const int p = partition(data, lower_bound, upper_bound);
+
+            if (p <= (lower_bound + upper_bound) / 2) {
+                _hybrid_quicksort(data, lower_bound, p);
+                lower_bound = p + 1;
+            } else {
+                _hybrid_quicksort(data, p+1, upper_bound);
+                upper_bound = p;
+            }
         }
     }
 }
@@ -74,7 +84,6 @@ typedef struct {
 } qs_params;
 
 void _threaded_quicksort(void *args) {
-    // This stands for "concrete args".
     qs_params *c_args = (qs_params *)args;
 
     if (c_args->low < c_args->high) {
@@ -99,11 +108,14 @@ void _threaded_quicksort(void *args) {
             right_child->pool   = c_args->pool;
 
             thpool_add_work(c_args->pool, _threaded_quicksort, (void *)left_child);
+            thpool_add_work(c_args->pool, _threaded_quicksort, (void *)right_child);
 
             // Why waste a perfectly good thread? Let's reuse it!
             // Although to be fair this could build up a stack as would the other versions + it doesnt free args until all the stack is complete.
             //  (Which means that ausiliary memory is release all at the end and not as soon as it is not needed anymore).
-            _threaded_quicksort((void*)right_child);
+            // It is unclear at this moment wether reusing the current thread actually yields more performance. We are using a thread pool so we don't pay the overhead
+            //  of spinning up a new thread.
+            // _threaded_quicksort((void*)right_child);
         }
     }
 
