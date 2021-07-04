@@ -42,7 +42,7 @@ def main():
         f.write("Algorithm,N,N_THREADS,HYBRID_THRESHOLD,THREADED_THRESHOLD,Time Elapsed\n")
     
     for n_threads, shift_hybrid_threshold in itertools.product(range(*range_n_threads), range(*range_shift_hybrid_threshold)):
-        for shift_threaded_threshold in filter(lambda x: x > shift_hybrid_threshold, range(*range_shift_threaded_threshold)):
+        for shift_threaded_threshold in filter(lambda x: shift_hybrid_threshold < x, range(*range_shift_threaded_threshold)):
             with open(source_file, "r") as f:
                 input_file = f.readlines()
 
@@ -61,9 +61,9 @@ def main():
                 f.write(f"{algorithm},2^{shift_N},{n_threads},2^{shift_hybrid_threshold},2^{shift_threaded_threshold},")
 
                 subprocess.run(["make"], stdout=subprocess.DEVNULL)
-                result = subprocess.run(["bin/main", f"{algorithm}", f"{N}", f"{K}"], capture_output=True)
+                benchmark_resutls = subprocess.run(["bin/main", f"{algorithm}", f"{N}", f"{K}"], capture_output=True)
 
-                f.write(f"{result.stdout.decode()} s\n")
+                f.write(f"{benchmark_resutls.stdout.decode()} s\n")
 
 
 if __name__ == "__main__":
