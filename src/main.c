@@ -1,28 +1,56 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #include "../headers/benchmark.h"
 #include "../headers/quicksort.h"
 
-#define N (1<<26)
-#define K (5)
 
+int main(int argc, char *argv[]) {
+    void (*f)(int *const, const int);
+    unsigned int N;
+    unsigned int K;
+    int *initial_sequence;
 
-int main() {
-    srandom(time(NULL));
+    if (argc != 4) {
+        exit(1);
+    }
 
-    int *initial_sequence = malloc(N * sizeof(int));
+    if (strcmp(argv[1], "0") == 0) {
+        f = quicksort;
+    } else if (strcmp(argv[1], "1") == 0) {
+        f = hybrid_quicksort;
+    } else if (strcmp(argv[1], "2") == 0) {
+        f = threaded_quicksort;
+    } else {
+        exit(2);
+    }
+
+    N = atoi(argv[2]);
+    if (N == 0) {
+        exit(3);
+    }
+
+    K = atoi(argv[3]);
+    if (K == 0) {
+        exit(4);
+    }
+
+    initial_sequence = malloc(N * sizeof(int));
+    if (initial_sequence == NULL) {
+        exit(5);
+    }
+
+    srandom((unsigned int)1000);
 
     for (unsigned int i = 0; i < N; i++) {
         initial_sequence[i] = random() % 60000 - 30000;
     }
 
-    printf("Quicksort:\t\t%lf s\n", measure(&quicksort, initial_sequence, N, K));
-    printf("Hybrid quicksort:\t%lf s\n", measure(&hybrid_quicksort, initial_sequence, N, K));
-    printf("Threaded quicksort:\t%lf s\n", measure(&threaded_quicksort, initial_sequence, N, K));
+    printf("%lf", measure(f, initial_sequence, N, K));
 
     free((void *)initial_sequence);
 
-    return 0;
+    exit(0);
 }

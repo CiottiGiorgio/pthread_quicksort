@@ -4,9 +4,9 @@
 #include "../C-Thread-Pool/thpool.h"
 #include "../headers/utilities.h"
 
-#define N_THREADS           (8)
-#define HYBRID_THRESHOLD    (1<<8)
-#define THREADED_THRESHOLD  (1<<11)
+#define N_THREADS			(16)
+#define HYBRID_THRESHOLD	(1<<7)
+#define THREADED_THRESHOLD	(1<<16)
 
 
 int partition(int *const data, const int low, const int high) {
