@@ -26,6 +26,7 @@ double measure(void (*f)(int *const, const int), int *const initial_sequence, co
 
     //print_array(initial_sequence, size);
     //print_array(test_sequence, size);
+    //printf("%s\n", is_ordered(test_sequence, size) == 0 ? "Success!" : "Failure.");
 
     elapsed /= repetitions;
 

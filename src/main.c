@@ -27,18 +27,15 @@ int main(int argc, char *argv[]) {
         exit(2);
     }
 
-    N = atoi(argv[2]);
-    if (N == 0) {
+    if ((N = atoi(argv[2])) == 0) {
         exit(3);
     }
 
-    K = atoi(argv[3]);
-    if (K == 0) {
+    if ((K = atoi(argv[3])) == 0) {
         exit(4);
     }
 
-    initial_sequence = malloc(N * sizeof(int));
-    if (initial_sequence == NULL) {
+    if ((initial_sequence = malloc(N * sizeof(int))) == NULL) {
         exit(5);
     }
 
@@ -50,7 +47,7 @@ int main(int argc, char *argv[]) {
 
     printf("%lf", measure(f, initial_sequence, N, K));
 
-    free((void *)initial_sequence);
+    free(initial_sequence);
 
     exit(0);
 }

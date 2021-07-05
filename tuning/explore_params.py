@@ -20,18 +20,17 @@ Be sure to have a functioning make file otherwise the compilation process will n
 
 import subprocess
 import itertools
-from sys import stdout
 
 
-_algorithms = {"quicksort": 0, "Hybrid Quicksort": 1, "Threaded Quicksort": 2}
+_algorithms = {"Quicksort": 0, "Hybrid Quicksort": 1, "Threaded Quicksort": 2}
 algorithm = _algorithms["Threaded Quicksort"]
 shift_N = 26
 N = 2**shift_N
 K = 5
 
-range_n_threads = (8, 16+1)
-range_shift_hybrid_threshold = (6, 8+1)
-range_shift_threaded_threshold = (14, 17+1, 2)
+range_n_threads = (16, 16+1)
+range_shift_hybrid_threshold = (2, 13+1)
+range_shift_threaded_threshold = (10, 22+1)
 
 source_file = "./src/quicksort.c"
 results_file = "./tuning/results.csv"

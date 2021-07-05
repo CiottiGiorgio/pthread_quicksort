@@ -86,36 +86,32 @@ typedef struct {
 void _threaded_quicksort(void *args) {
     qs_params *c_args = (qs_params *)args;
 
-    if (c_args->low < c_args->high) {
+    while (c_args->low < c_args->high) {
         if (c_args->high - c_args->low < THREADED_THRESHOLD) {
             _hybrid_quicksort(c_args->data, c_args->low, c_args->high);
+            return;
         } else {
-            qs_params *left_child, *right_child;
+            qs_params *largest_sub_array;
 
             const int p = partition(c_args->data, c_args->low, c_args->high);
 
-            left_child  = malloc(sizeof(qs_params));
-            right_child = malloc(sizeof(qs_params));
+            largest_sub_array = malloc(sizeof(qs_params));
+            largest_sub_array->data = c_args->data;
+            largest_sub_array->pool = c_args->pool;
 
-            left_child->data    = c_args->data;
-            left_child->low     = c_args->low;
-            left_child->high    = p;
-            left_child->pool    = c_args->pool;
+            if (p <= (c_args->low + c_args->high) / 2) {
+                largest_sub_array->low  = p + 1;
+                largest_sub_array->high = c_args->high;
 
-            right_child->data   = c_args->data;
-            right_child->low    = p + 1;
-            right_child->high   = c_args->high;
-            right_child->pool   = c_args->pool;
+                c_args->high = p;
+            } else {
+                largest_sub_array->low  = c_args->low;
+                largest_sub_array->high = p;
 
-            thpool_add_work(c_args->pool, _threaded_quicksort, (void *)left_child);
-            thpool_add_work(c_args->pool, _threaded_quicksort, (void *)right_child);
+                c_args->low = p + 1;
+            }
 
-            // Why waste a perfectly good thread? Let's reuse it!
-            // Although to be fair this could build up a stack as would the other versions + it doesnt free args until all the stack is complete.
-            //  (Which means that ausiliary memory is release all at the end and not as soon as it is not needed anymore).
-            // It is unclear at this moment wether reusing the current thread actually yields more performance. We are using a thread pool so we don't pay the overhead
-            //  of spinning up a new thread.
-            // _threaded_quicksort((void*)right_child);
+            thpool_add_work(c_args->pool, (void *)_threaded_quicksort, (void *)largest_sub_array);
         }
     }
 
@@ -137,7 +133,7 @@ void threaded_quicksort(int *const data, const int size) {
     initial_args->pool  = qs_pool;
 
     if ((thpool_add_work(qs_pool, _threaded_quicksort, (void *)initial_args)) != 0) {
-        free((void *)initial_args);
+        free(initial_args);
         return;
     }
 
