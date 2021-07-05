@@ -122,7 +122,7 @@ void threaded_quicksort(int *const data, const int size) {
     threadpool qs_pool;
     qs_params *initial_args;
 
-    if ((qs_pool = thpool_init(N_THREADS)) == 0) {
+    if ((qs_pool = thpool_init(N_THREADS)) == NULL) {
         return;
     }
 
