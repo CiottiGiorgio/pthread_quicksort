@@ -8,6 +8,14 @@ The hybrid variant is single core but with some time and space optimizations.
 This is not meant to be used anywhere else other than this project because this is just a didactic exercise.
 As much as I tested this code please use it with caution. It is not general enough for a serious project in my opinion.
 
+## Usage
+Use `$ make` to build this project but keep in mind that I'm using `clang-llvm`. You should modify the parameter in the `makefile` to match your compiler.
+
+Parameters for main function:
+- {0, 1, 2} for selecting the variant of the algorithm
+- Any int as the size of the array to sort
+- Any int as the number of repetition when benchmarking the algorithm
+
 ## Description
 
 I wanted to make a comparison between the single-core version and the multi-core version. There are some parameters that greatly influence the performance on a given machine of this code.
