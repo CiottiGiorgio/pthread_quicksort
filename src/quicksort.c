@@ -89,7 +89,7 @@ void _threaded_quicksort(void *args) {
     while (c_args->low < c_args->high) {
         if (c_args->high - c_args->low < THREADED_THRESHOLD) {
             _hybrid_quicksort(c_args->data, c_args->low, c_args->high);
-            return;
+            break;
         } else {
             qs_params *largest_sub_array;
 
