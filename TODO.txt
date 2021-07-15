@@ -2,3 +2,4 @@
     any n that is known at compile time and write the classic insertion sort for any other n.
 - Experiment with making a heap before using basic insertion sort as per "https://youtu.be/FJJTYQYB1JQ?t=1762" from the great mind of Andrei Alexandrescu.
 - Explore frameworks like Cilk for LLVM that automatically load balance and get to the theoretical speedups for "fork-join" tasks like quicksort.
+- We could think if it's possible to have the parameters allocated just once and then reused for every subsequent call.
