@@ -7,7 +7,7 @@
 #include "../headers/quicksort.h"
 
 
-double measure(void (*f)(int *const, const int), int *const initial_sequence, const int size, const unsigned int repetitions) {
+double measure(int (*f)(int *const, const int), int *const initial_sequence, const int size, const unsigned int repetitions) {
     int *test_sequence = malloc(size * sizeof(int));
 
     struct timespec start, finish;

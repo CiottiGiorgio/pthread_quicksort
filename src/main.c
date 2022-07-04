@@ -8,7 +8,7 @@
 
 
 int main(int argc, char *argv[]) {
-    void (*f)(int *const, const int);
+    int (*f)(int *const, const int);
     unsigned int N;
     unsigned int K;
     int *initial_sequence;
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
         initial_sequence[i] = random() % 60000 - 30000;
     }
 
-    printf("%lf", measure(f, initial_sequence, N, K));
+    printf("%lf\n", measure(f, initial_sequence, N, K));
 
     free(initial_sequence);
 

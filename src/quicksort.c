@@ -10,7 +10,7 @@
 
 
 int partition(int *const data, const int low, const int high) {
-    const int pivot = data[ (low + high) / 2 ];
+    const int pivot = data[ low + (high - low) / 2 ];
     int i = low - 1;
     int j = high + 1;
 
@@ -31,8 +31,10 @@ void _quicksort(int *const data, const int low, const int high) {
     }
 }
 
-void quicksort(int *const data, const int size) {
+int quicksort(int *const data, const int size) {
     _quicksort(data, 0, size - 1);
+
+    return 1;
 }
 
 
@@ -71,8 +73,10 @@ void _hybrid_quicksort(int *const data, const int low, const int high) {
     }
 }
 
-void hybrid_quicksort(int *const data, const int size) {
+int hybrid_quicksort(int *const data, const int size) {
     _hybrid_quicksort(data, 0, size - 1);
+
+    return 1;
 }
 
 
@@ -118,15 +122,19 @@ void _threaded_quicksort(void *args) {
     free(args);
 }
 
-void threaded_quicksort(int *const data, const int size) {
+int threaded_quicksort(int *const data, const int size) {
     threadpool qs_pool;
     qs_params *initial_args;
 
     if ((qs_pool = thpool_init(N_THREADS)) == NULL) {
-        return;
+        return 0;
     }
 
     initial_args = malloc(sizeof(qs_params));
+    if (initial_args == NULL) {
+        return 0;
+    }
+
     initial_args->data  = data;
     initial_args->low   = 0;
     initial_args->high  = size - 1;
@@ -134,9 +142,11 @@ void threaded_quicksort(int *const data, const int size) {
 
     if ((thpool_add_work(qs_pool, _threaded_quicksort, (void *)initial_args)) != 0) {
         free(initial_args);
-        return;
+        return 0;
     }
 
     thpool_wait(qs_pool);
     thpool_destroy(qs_pool);
+
+    return 1;
 }

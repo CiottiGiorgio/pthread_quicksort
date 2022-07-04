@@ -1,1 +1,1 @@
-double measure(void (*f)(int *, const int), int *const initial_sequence, const unsigned int size, const unsigned int repetitions);
+double measure(int (*f)(int *, const int), int *const initial_sequence, const unsigned int size, const unsigned int repetitions);
