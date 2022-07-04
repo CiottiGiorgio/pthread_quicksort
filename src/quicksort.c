@@ -9,13 +9,11 @@
 #define THREADED_THRESHOLD	(1<<16)
 
 
-int safe_middle(const int a, const int b){
-    return a + (b - a) / 2;
-}
+#define SAFE_MIDDLE(a, b) (a + (b - a) / 2)
 
 
 int partition(int *const data, const int low, const int high) {
-    const int pivot = data[ safe_middle(low, high) ];
+    const int pivot = data[ SAFE_MIDDLE(low, high) ];
     int i = low - 1;
     int j = high + 1;
 
@@ -67,7 +65,7 @@ void _hybrid_quicksort(int *const data, const int low, const int high) {
         } else {
             const int p = partition(data, lower_bound, upper_bound);
 
-            if (p <= safe_middle(lower_bound, upper_bound)) {
+            if (p <= SAFE_MIDDLE(lower_bound, upper_bound)) {
                 _hybrid_quicksort(data, lower_bound, p);
                 lower_bound = p + 1;
             } else {
@@ -108,7 +106,7 @@ void _threaded_quicksort(void *args) {
             largest_sub_array->data = c_args->data;
             largest_sub_array->pool = c_args->pool;
 
-            if (p <= safe_middle(c_args->low, c_args->high)) {
+            if (p <= SAFE_MIDDLE(c_args->low, c_args->high)) {
                 largest_sub_array->low  = p + 1;
                 largest_sub_array->high = c_args->high;
 
